@@ -1,0 +1,111 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+model Friend {
+    id               Int       @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    firstUserId      Int       @map("first_user_id")
+    secondUserId     Int       @map("second_user_id")
+    createdDate      DateTime  @default(now()) @map("created_date") @db.DateTime(0)
+    deletedDate      DateTime? @map("deleted_date") @db.DateTime(0)
+    firstUserDetail  User      @relation("friends_first_user_idTousers", fields: [firstUserId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "first_friends_users")
+    secondUserDetail User      @relation("friends_second_user_idTousers", fields: [secondUserId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "second_friends_users")
+
+    @@index([firstUserId], map: "first_friends_users_idx")
+    @@index([secondUserId], map: "second_friends_users_idx")
+    @@map("friends")
+}
+
+model MessageType {
+    id          Int       @id @unique(map: "idmessage_types_UNIQUE") @default(autoincrement())
+    name        String    @db.VarChar(45)
+    createdDate DateTime  @default(now()) @map("created_date") @db.DateTime(0)
+    messageList Message[]
+
+    @@map("message_types")
+}
+
+model Message {
+    id                Int         @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    content           String      @db.MediumText
+    messageTypeId     Int         @map("message_type_id")
+    senderId          Int         @map("sender_id")
+    receiverId        Int         @map("receiver_id")
+    createdDate       DateTime    @default(now()) @map("created_date") @db.DateTime(0)
+    deleted           Boolean     @default(false)
+    messageTypeDetail MessageType @relation(fields: [messageTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_message_type")
+    receiverDetail    User        @relation("messages_receiver_idTousers", fields: [receiverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receiver")
+    senderDetail      User        @relation("messages_sender_idTousers", fields: [senderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sender")
+
+    @@index([messageTypeId], map: "fk_message_type_idx")
+    @@index([receiverId], map: "fk_receiver_idx")
+    @@index([senderId], map: "fk_sender_idx")
+    @@map("messages")
+}
+
+model NotificationType {
+    id               Int            @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    name             String         @map("created_date") @db.VarChar(45)
+    createdDate      DateTime       @default(now()) @db.DateTime(0)
+    notificationList Notification[]
+
+    @@map("notification_types")
+}
+
+model Notification {
+    id                         Int              @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    content                    String           @db.VarChar(100)
+    notificationTypeId         Int              @map("notification_type_id")
+    senderId                   Int              @map("sender_id")
+    receiverId                 Int              @map("receiver_id")
+    accepted                   Boolean          @default(false)
+    createdDate                DateTime         @default(now()) @map("created_date") @db.DateTime(0)
+    deleted                    Boolean          @default(false)
+    notificationReceiverDetail User             @relation("notifications_receiver_idTousers", fields: [receiverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_notification_receiver")
+    notificationSenderDetail   User             @relation("notifications_sender_idTousers", fields: [senderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_notification_sender")
+    notificationTypeDetail     NotificationType @relation(fields: [notificationTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_notification_type")
+
+    @@index([notificationTypeId], map: "fk_notification_type_idx")
+    @@index([receiverId], map: "fk_receiver_idx")
+    @@index([senderId], map: "fk_sender_idx")
+    @@map("notifications")
+}
+
+model UserRole {
+    id          Int       @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    name        String    @db.VarChar(100)
+    createdDate DateTime  @default(now()) @map("created_date") @db.DateTime(0)
+    deletedDate DateTime? @map("deleted_date") @db.DateTime(0)
+    userList    User[]
+
+    @@map("user_roles")
+}
+
+model User {
+    id                       Int            @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    firstName                String         @map("first_name") @db.VarChar(100)
+    lastName                 String         @map("last_name") @db.VarChar(255)
+    username                 String         @unique(map: "username_UNIQUE") @db.VarChar(100)
+    password                 String         @db.VarChar(255)
+    avatar                   String         @db.VarChar(500)
+    userRoleId               Int            @map("user_role_id")
+    tick                     Boolean        @default(false)
+    email                    String         @db.VarChar(500)
+    createdDate              DateTime       @default(now()) @map("created_date") @db.DateTime(0)
+    deletedDate              DateTime?      @map("deleted_date") @db.DateTime(0)
+    firstFriendList          Friend[]       @relation("friends_first_user_idTousers")
+    secondFriendList         Friend[]       @relation("friends_second_user_idTousers")
+    messageReceiverList      Message[]      @relation("messages_receiver_idTousers")
+    messageSenderList        Message[]      @relation("messages_sender_idTousers")
+    notificationReceiverList Notification[] @relation("notifications_receiver_idTousers")
+    notificationSenderList   Notification[] @relation("notifications_sender_idTousers")
+    userRoleDetail           UserRole       @relation(fields: [userRoleId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users-user_roles")
+
+    @@index([userRoleId], map: "users-user_roles_idx")
+    @@map("users")
+}
