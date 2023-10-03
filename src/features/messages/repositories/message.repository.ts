@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
+import { MESSAGE_SIZE } from '~/constants/constant';
 import { MESSAGES } from '~/constants/message.constant';
-import { MESSAGE_SIZE } from '~/constants/page.constant';
 
 const prisma = new PrismaClient();
 

@@ -25,6 +25,7 @@ export type CreateAddFriendNotification = {
 		senderId: number;
 		receiverId: number;
 	}) => Promise<any>;
+	sendAddFriendNotificationSocket: (notification: NotificationEntity) => void;
 	mapNotificationResponse: (notification: NotificationEntity) => AddFriendNotificationResponse;
 };
 

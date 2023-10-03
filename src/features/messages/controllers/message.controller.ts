@@ -1,14 +1,11 @@
 import { uploadImage } from '~/utils/cloudinary.util';
 import { errorLogger } from '~/utils/logger.util';
-import { sendLastestMessage } from '../message.socket';
+import { sendLastestMessageSocket } from '../message.socket';
 import {
 	findAllMessagesByUserIdRepository,
 	createMessageRepository,
 } from '../repositories/message.repository';
-import {
-	findAllMessageByUserIdService,
-	CreateMessageService,
-} from '../services/message.service';
+import { findAllMessageByUserIdService, CreateMessageService } from '../services/message.service';
 import { mapMessageResponse, sortMessageList } from '../utils/message.util';
 import { Request, Response } from 'express';
 
@@ -50,7 +47,7 @@ export const createNewMessageController = async (req: Request, res: Response) =>
 			senderId: parseInt(currentUserId),
 			receiverId: parseInt(receiverId),
 			uploadImage,
-			sendLastestMessage,
+			sendLastestMessageSocket,
 		});
 
 		return res.status(201).send({ content: result });

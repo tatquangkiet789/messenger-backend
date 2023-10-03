@@ -36,5 +36,5 @@ export type CreateMessage = {
 	}) => Promise<any>;
 	uploadImage: (content: string) => Promise<string | undefined>;
 	mapMessageResponse: (message: MessageEntity) => MessageResponse;
-	sendLastestMessage: (lastestMessage: MessageResponse) => void;
+	sendLastestMessageSocket: (lastestMessage: MessageResponse) => void;
 };

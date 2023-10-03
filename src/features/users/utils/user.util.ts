@@ -38,10 +38,30 @@ export const mapUserResponse = ({
 		id: user.id!,
 		firstName: user.firstName,
 		lastName: user.lastName,
-		username: user.username,
 		avatar: user.avatar!,
 		tick: user.tick!,
 		isFriendWithCurrentUser: isFriendWithCurrentUser,
 	};
 	return userResponse;
+};
+
+export const filterNotFriendWithCurrentUser = ({
+	userList,
+	isFriendWithCurrentUserList,
+}: {
+	userList: UserEntity[];
+	isFriendWithCurrentUserList: boolean[];
+}) => {
+	const filteredList = userList.reduce<UserResponse[]>((result, user, index) => {
+		if (!isFriendWithCurrentUserList[index]) {
+			result.push(
+				mapUserResponse({
+					user,
+					isFriendWithCurrentUser: isFriendWithCurrentUserList[index],
+				}),
+			);
+		}
+		return result;
+	}, []);
+	return filteredList;
 };

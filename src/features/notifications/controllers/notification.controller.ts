@@ -15,6 +15,7 @@ import {
 import { mapNotificationResponse } from '../utils/notification.util';
 import { createFriendRepository } from '~/features/friends/repositories/friend.repository';
 import { MESSAGES } from '~/constants/message.constant';
+import { sendAddFriendNotificationSocket } from '../notification.socket';
 
 export const findAllAddFriendNotificationsController = async (req: Request, res: Response) => {
 	try {
@@ -44,6 +45,7 @@ export const createAddFriendNotificationController = async (req: Request, res: R
 			receiverId: receiverId as number,
 			createAddFriendNotificationRepository,
 			mapNotificationResponse,
+			sendAddFriendNotificationSocket,
 		});
 
 		return res.status(200).send({ content: result });
@@ -57,7 +59,6 @@ export const acceptAddFriendNotificationController = async (req: Request, res: R
 		const { notificationId } = req.body;
 		const { id: currentUserId } = req.currentUser;
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const result = await acceptAddFriendNotificationService({
 			notificationId: notificationId as number,
 			currentUserId: currentUserId as number,
@@ -66,7 +67,9 @@ export const acceptAddFriendNotificationController = async (req: Request, res: R
 			createFriendRepository,
 		});
 
-		return res.status(200).send({ message: MESSAGES.addFriendSuccessfully });
+		if (result) return res.status(200).send({ message: MESSAGES.addFriendSuccessfully });
+
+		throw new Error(MESSAGES.unknowError);
 	} catch (error) {
 		return res.status(400).send({ message: (error as Error).message });
 	}

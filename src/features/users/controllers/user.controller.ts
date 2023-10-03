@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { findAllUsersByKeywordService } from '../services/user.service';
 import { checkIfUsersAreFriendRepository } from '~/features/friends/repositories/friend.repository';
 import { findAllUsersByKeywordRepository } from '../repositories/user.repository';
-import { filterCurrentUser, mapUserResponse } from '../utils/user.util';
+import { findAllUsersByKeywordService } from '../services/user.service';
+import { filterCurrentUser, filterNotFriendWithCurrentUser } from '../utils/user.util';
 
 // [POST] /api/v1/users/search?q=:q
 export const findAllUsersByKeywordController = async (req: Request, res: Response) => {
@@ -16,7 +16,7 @@ export const findAllUsersByKeywordController = async (req: Request, res: Respons
 			checkIfUsersAreFriendRepository,
 			filterCurrentUser,
 			findAllUsersByKeywordRepository,
-			mapUserResponse,
+			filterNotFriendWithCurrentUser,
 		});
 
 		return res.status(200).send({ content: result });

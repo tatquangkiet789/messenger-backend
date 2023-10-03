@@ -37,13 +37,15 @@ export const createAddFriendNotificationService = async (param: CreateAddFriendN
 			receiverId,
 			createAddFriendNotificationRepository,
 			mapNotificationResponse,
+			sendAddFriendNotificationSocket,
 		} = param;
 		const result: NotificationEntity = await createAddFriendNotificationRepository({
 			senderId,
 			receiverId,
 		});
-		const response = mapNotificationResponse(result);
+		sendAddFriendNotificationSocket(result);
 
+		const response = mapNotificationResponse(result);
 		return response;
 	} catch (error) {
 		throw new Error((error as Error).message);

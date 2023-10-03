@@ -5,7 +5,7 @@ import { socketIO } from '../socket/socket';
 import { findConnectedUserByUserId } from '../socket/utils/socket.util';
 import { MessageResponse } from './models/message.response';
 
-export const sendLastestMessage = (lastestMessage: MessageResponse) => {
+export const sendLastestMessageSocket = (lastestMessage: MessageResponse) => {
 	try {
 		const receiverSocket = findConnectedUserByUserId({
 			userId: lastestMessage.receiverDetail.id,

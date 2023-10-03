@@ -9,7 +9,7 @@ export const findAllUsersByKeywordService = async (param: FindAllUsersByKeyword)
 			filterCurrentUser,
 			currentUserID,
 			checkIfUsersAreFriendRepository,
-			mapUserResponse,
+			filterNotFriendWithCurrentUser,
 		} = param;
 
 		const userList: UserEntity[] = await findAllUsersByKeywordRepository({
@@ -27,9 +27,10 @@ export const findAllUsersByKeywordService = async (param: FindAllUsersByKeyword)
 			}),
 		);
 
-		const result = filteredUserList.map((user: UserEntity, index: number) =>
-			mapUserResponse({ user, isFriendWithCurrentUser: isFriendWithCurrentUserList[index] }),
-		);
+		const result = filterNotFriendWithCurrentUser({
+			userList: filteredUserList,
+			isFriendWithCurrentUserList,
+		});
 
 		return result;
 	} catch (error) {

@@ -5,7 +5,7 @@ import { socketIO } from '../socket/socket';
 import { SOCKET_CONSTANT } from '../socket/constants/constants';
 import { infoLogger } from '~/utils/logger.util';
 
-export const sendAddFriendNotification = (notification: NotificationEntity) => {
+export const sendAddFriendNotificationSocket = (notification: NotificationEntity) => {
 	try {
 		const { content, notificationSenderDetail, notificationReceiverDetail } = notification;
 		const receiverSocket = findConnectedUserByUserId({

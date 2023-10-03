@@ -1,7 +1,6 @@
 export const NOTIFICATION_TYPE = {
 	ADD_FRIEND: 1,
 	LIKE: 2,
-	COMMENT: 3,
 };
 
 export const NOTIFICATION_MESSAGE = {

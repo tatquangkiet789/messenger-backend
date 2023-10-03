@@ -1,7 +1,7 @@
 // import { infoLogger, errorLogger } from '@/src/utils/logger.util';
 // import { IConnectedUser } from '../models/connectedUser.model';
 
-import { infoLogger } from '@/src/utils/logger.util';
+// import { infoLogger } from '@/src/utils/logger.util';
 
 // let connectedUserList: IConnectedUser[] = [];
 
@@ -52,37 +52,39 @@ import { infoLogger } from '@/src/utils/logger.util';
 // };
 
 type ConnectedUser = {
-    userId: number;
-    socketId: string;
+	userId: number;
+	socketId: string;
 };
 
 let connectedUserList: ConnectedUser[] = [];
 
 export const createConnectedUser = (connectedUser: ConnectedUser) => {
-    try {
-        const existedSocketId = connectedUserList.find(
-            (user) => user.socketId === connectedUser.socketId,
-        );
-        if (existedSocketId) return;
+	try {
+		const existedSocket = connectedUserList.find(
+			(user) => user.socketId === connectedUser.socketId,
+		);
+		if (existedSocket) return;
 
-        const existedUser = connectedUserList.find((user) => user.userId === connectedUser.userId);
+		const existedUserIndex = connectedUserList.findIndex(
+			(user) => user.userId === connectedUser.userId,
+		);
+		if (existedUserIndex >= 0) {
+			connectedUserList[existedUserIndex].socketId = connectedUser.socketId;
+			return;
+		}
 
-        if (existedUser) {
-            existedUser.socketId = connectedUser.socketId;
-        } else {
-            connectedUserList = [...connectedUserList, connectedUser];
-        }
+		connectedUserList = [...connectedUserList, connectedUser];
 
-        console.log(connectedUserList);
-    } catch (error) {
-        throw new Error((error as Error).message);
-    }
+		console.log(connectedUserList);
+	} catch (error) {
+		throw new Error((error as Error).message);
+	}
 };
 
 export const findConnectedUserByUserId = ({ userId }: { userId: number }) => {
-    try {
-        return connectedUserList.find((user: ConnectedUser) => user.userId === userId);
-    } catch (error) {
-        throw new Error((error as Error).message);
-    }
+	try {
+		return connectedUserList.find((user: ConnectedUser) => user.userId === userId);
+	} catch (error) {
+		throw new Error((error as Error).message);
+	}
 };

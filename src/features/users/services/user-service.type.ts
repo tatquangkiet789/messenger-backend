@@ -12,13 +12,6 @@ export type FindAllUsersByKeyword = {
 	keyword: string;
 	currentUserID: number;
 	findAllUsersByKeywordRepository: ({ keyword }: { keyword: string }) => Promise<any>;
-	mapUserResponse: ({
-		user,
-		isFriendWithCurrentUser,
-	}: {
-		user: UserEntity;
-		isFriendWithCurrentUser: boolean;
-	}) => UserResponse;
 	filterCurrentUser: ({
 		currentUserID,
 		userList,
@@ -33,4 +26,11 @@ export type FindAllUsersByKeyword = {
 		currentUserID: number;
 		userID: number;
 	}) => Promise<boolean>;
+	filterNotFriendWithCurrentUser: ({
+		userList,
+		isFriendWithCurrentUserList,
+	}: {
+		userList: UserEntity[];
+		isFriendWithCurrentUserList: boolean[];
+	}) => UserResponse[];
 };

@@ -37,7 +37,7 @@ export const CreateMessageService = async (param: CreateMessage) => {
 			uploadImage,
 			mapMessageResponse,
 			createMessageRepository,
-			sendLastestMessage,
+			sendLastestMessageSocket,
 		} = param;
 		let messageTypeId = 0;
 		let uploadedImage: string | undefined;
@@ -56,7 +56,7 @@ export const CreateMessageService = async (param: CreateMessage) => {
 			messageTypeId,
 		});
 		const result = mapMessageResponse(message);
-		sendLastestMessage(result);
+		sendLastestMessageSocket(result);
 
 		return result;
 	} catch (error) {
