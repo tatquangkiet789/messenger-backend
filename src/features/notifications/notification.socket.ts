@@ -4,6 +4,7 @@ import { findConnectedUserByUserId } from '../socket/utils/socket.util';
 import { socketIO } from '../socket/socket';
 import { SOCKET_CONSTANT } from '../socket/constants/constants';
 import { infoLogger } from '~/utils/logger.util';
+import { FriendResponse } from '../friends/models/friend.reponse';
 
 export const sendAddFriendNotificationSocket = (notification: NotificationEntity) => {
 	try {
@@ -18,6 +19,23 @@ export const sendAddFriendNotificationSocket = (notification: NotificationEntity
 		socketIO
 			.to(receiverSocket.socketId)
 			.emit(SOCKET_CONSTANT.SEND_ADD_FRIEND_NOTIFICATION, { content: result });
+	} catch (error) {
+		throw new Error(MESSAGES.unknowError);
+	}
+};
+
+export const sendAcceptedAddFriendNotificationSocket = (friend: FriendResponse) => {
+	try {
+		const { id } = friend;
+		const receiverSocket = findConnectedUserByUserId({ userId: id });
+		if (!receiverSocket) return;
+
+		infoLogger(
+			`Sending accepted add friend notification to socketID: [${receiverSocket.socketId}]`,
+		);
+		socketIO
+			.to(receiverSocket.socketId)
+			.emit(SOCKET_CONSTANT.SEND_ACCEPTED_ADD_FRIEND_NOTIFICATION, { content: friend });
 	} catch (error) {
 		throw new Error(MESSAGES.unknowError);
 	}

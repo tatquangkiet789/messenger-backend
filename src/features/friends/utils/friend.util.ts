@@ -6,18 +6,18 @@ import { MESSAGES } from '~/constants/message.constant';
 import { MESSAGE_TYPE } from '~/constants/constant';
 
 export const filterCurrentUser = ({
-	friendList,
+	friend,
 	currentUserId,
 }: {
-	friendList: FriendEntity[];
+	friend: FriendEntity;
 	currentUserId: number;
 }) => {
-	const result: UserEntity[] = [];
-	friendList.forEach((user: FriendEntity) => {
-		if (user.firstUserId !== currentUserId) result.push(user.firstUserDetail!);
-		if (user.secondUserId !== currentUserId) result.push(user.secondUserDetail!);
-	});
-	return result;
+	if (friend.firstUserId !== currentUserId && friend.firstUserDetail) {
+		return friend.firstUserDetail;
+	}
+	if (friend.secondUserId !== currentUserId && friend.secondUserDetail) {
+		return friend.secondUserDetail;
+	}
 };
 
 export const mapFriendResponse = ({

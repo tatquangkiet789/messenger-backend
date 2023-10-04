@@ -13,9 +13,13 @@ import {
 	declineAddFriendNotificationRepository,
 } from '../repositories/notification.repository';
 import { mapNotificationResponse } from '../utils/notification.util';
-import { createFriendRepository } from '~/features/friends/repositories/friend.repository';
+import {
+	checkIfUsersAreFriendRepository,
+	createFriendRepository,
+} from '~/features/friends/repositories/friend.repository';
 import { MESSAGES } from '~/constants/message.constant';
 import { sendAddFriendNotificationSocket } from '../notification.socket';
+import { filterCurrentUser, mapFriendResponse } from '~/features/friends/utils/friend.util';
 
 export const findAllAddFriendNotificationsController = async (req: Request, res: Response) => {
 	try {
@@ -65,9 +69,15 @@ export const acceptAddFriendNotificationController = async (req: Request, res: R
 			findAddFriendNotificationByIdRepository,
 			acceptAddFriendNotificationRepository,
 			createFriendRepository,
+			filterCurrentUser,
+			mapFriendResponse,
+			checkIfUsersAreFriendRepository,
 		});
 
-		if (result) return res.status(200).send({ message: MESSAGES.addFriendSuccessfully });
+		if (result)
+			return res
+				.status(200)
+				.send({ message: MESSAGES.addFriendSuccessfully, content: result });
 
 		throw new Error(MESSAGES.unknowError);
 	} catch (error) {

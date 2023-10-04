@@ -23,12 +23,12 @@ export type FindAllFriendByUserId = {
 		receiverId: number;
 	}) => Promise<any>;
 	filterCurrentUser: ({
-		friendList,
+		friend,
 		currentUserId,
 	}: {
-		friendList: FriendEntity[];
+		friend: FriendEntity;
 		currentUserId: number;
-	}) => UserEntity[];
+	}) => UserEntity | any;
 	mapFriendResponse: ({
 		user,
 		lastestMessage,

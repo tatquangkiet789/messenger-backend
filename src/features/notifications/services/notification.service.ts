@@ -57,9 +57,12 @@ export const acceptAddFriendNotificationService = async (param: AcceptAddFriendN
 		const {
 			notificationId,
 			currentUserId,
+			checkIfUsersAreFriendRepository,
 			acceptAddFriendNotificationRepository,
 			findAddFriendNotificationByIdRepository,
 			createFriendRepository,
+			mapFriendResponse,
+			filterCurrentUser,
 		} = param;
 		const existed: NotificationEntity = await findAddFriendNotificationByIdRepository({
 			notificationId,
@@ -75,17 +78,26 @@ export const acceptAddFriendNotificationService = async (param: AcceptAddFriendN
 			throw new Error(MESSAGES.addFriendNotificationSenderCannotAccept);
 		}
 
-		const result: number = await acceptAddFriendNotificationRepository({
+		const accepted: boolean = await acceptAddFriendNotificationRepository({
 			notificationId: existed.id!,
 			currentUserId,
 		});
 
-		const friend = await createFriendRepository({
-			currentUserId: existed.senderId,
-			userId: existed.receiverId,
+		const isFriend = await checkIfUsersAreFriendRepository({
+			currentUserID: existed.senderId,
+			userID: existed.receiverId,
 		});
 
-		if (result && friend) return true;
+		if (accepted && !isFriend) {
+			const friend = await createFriendRepository({
+				currentUserId: existed.senderId,
+				userId: existed.receiverId,
+			});
+
+			const filtered = filterCurrentUser({ friend, currentUserId });
+			const result = mapFriendResponse({ user: filtered });
+			return result;
+		}
 
 		throw new Error(MESSAGES.unknowError);
 	} catch (error) {

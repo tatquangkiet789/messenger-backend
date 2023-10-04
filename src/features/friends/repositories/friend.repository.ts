@@ -85,6 +85,10 @@ export const createFriendRepository = async ({
 				firstUserId: currentUserId,
 				secondUserId: userId,
 			},
+			include: {
+				firstUserDetail: true,
+				secondUserDetail: true,
+			},
 		});
 		if (result) return result;
 

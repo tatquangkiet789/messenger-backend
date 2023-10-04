@@ -18,10 +18,11 @@ export const findAllFriendsByUserIdService = async (param: FindAllFriendByUserId
 			includeUserDetail: true,
 			page: page,
 		});
-		const filteredUserList: UserEntity[] = filterCurrentUser({
-			friendList: friendList,
-			currentUserId: currentUserId,
-		});
+
+		const filteredUserList: UserEntity[] = friendList.map((friend) =>
+			filterCurrentUser({ friend, currentUserId }),
+		);
+
 		const lastestMessageList: string[] = await Promise.all(
 			filteredUserList.map(async (user) => {
 				const lastestMessage = await findLastestMessageByUserIdRepository({
@@ -31,6 +32,7 @@ export const findAllFriendsByUserIdService = async (param: FindAllFriendByUserId
 				return lastestMessage;
 			}),
 		);
+
 		const result = filteredUserList.map((user: UserEntity, index: number) =>
 			mapFriendResponse({ user: user, lastestMessage: lastestMessageList[index] }),
 		);

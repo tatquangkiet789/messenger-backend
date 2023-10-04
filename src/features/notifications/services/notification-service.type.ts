@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { FriendResponse } from '~/features/friends/models/friend.reponse';
+import UserEntity from '~/features/users/models/user.entity';
 import NotificationEntity from '../models/notification.entity';
 import { AddFriendNotificationResponse } from '../models/notification.response';
+import FriendEntity from '~/features/friends/models/friend.entity';
 
 export type FindAllAddFriendNotification = {
 	receiverId: number;
@@ -51,6 +54,27 @@ export type AcceptAddFriendNotification = {
 		currentUserId: number;
 		userId: number;
 	}) => Promise<any>;
+	mapFriendResponse: ({
+		user,
+		lastestMessage,
+	}: {
+		user: UserEntity;
+		lastestMessage?: any;
+	}) => FriendResponse;
+	filterCurrentUser: ({
+		friend,
+		currentUserId,
+	}: {
+		friend: FriendEntity;
+		currentUserId: number;
+	}) => UserEntity | any;
+	checkIfUsersAreFriendRepository: ({
+		currentUserID,
+		userID,
+	}: {
+		currentUserID: number;
+		userID: number;
+	}) => Promise<boolean>;
 };
 
 export type DeclineAddFriendNotification = {

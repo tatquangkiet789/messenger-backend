@@ -102,7 +102,7 @@ export const acceptAddFriendNotificationRepository = async ({
 				content: NOTIFICATION_MESSAGE.ACCEPTED,
 			},
 		});
-		if (result) return result;
+		if (result) return true;
 
 		throw new Error(MESSAGES.unknowError);
 	} catch (error) {
