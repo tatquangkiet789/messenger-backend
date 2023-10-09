@@ -30,7 +30,10 @@ import { createServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { Express } from 'express';
 import { SOCKET_CONSTANT } from './constants/constants';
-import { createConnectedUser } from './utils/socket.util';
+import { createConnectedUser, findConnectedUserByUserId } from './utils/socket.util';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 let socketIO: Server;
 
@@ -56,27 +59,53 @@ const initSocketServer = (socketIO: Server) => {
 		});
 
 		// VIDEO CALL
-		// socket.on(SOCKET_CONSTANT.SEND_VIDEO_CALL_RECEIVER_ID, ({ userId }: { userId: number }) => {
-		// 	const videoCallReceiver = findConnectedUserByUserId({ userId });
-		// 	if (videoCallReceiver) {
-		// 		socket.emit(SOCKET_CONSTANT.RECEIVE_VIDEO_CALL_RECEIVER_ID, {
-		// 			videoCallReceiverSocketId: videoCallReceiver.socketId,
-		// 		});
-		// 	}
-		// 	console.error('Người dùng hiện không online');
-		// });
-		// socket.on(SOCKET_CONSTANT.ANSWER_CALL, (data: any) => {
-		// 	const { to, signal } = data;
-		// 	socketIO.to(to).emit('call-accepted', signal);
-		// });
+		socket.on(
+			SOCKET_CONSTANT.SEND_VIDEO_CALL_RECEIVER_ID,
+			async ({ senderID, receiverID }: { senderID: number; receiverID: number }) => {
+				const videoCallReceiver = findConnectedUserByUserId({ userId: receiverID });
+				const videoCallSender = findConnectedUserByUserId({ userId: senderID });
+
+				if (!videoCallReceiver || !videoCallSender) return;
+
+				const caller = await prisma.user.findFirst({
+					where: {
+						id: senderID,
+					},
+				});
+				if (!caller) return;
+				// Trả socketID về phía người gọi
+				socket.emit(SOCKET_CONSTANT.RECEIVE_VIDEO_CALL_RECEIVER_ID, {
+					receivedCallSocketID: videoCallReceiver.socketId,
+					callerSocketID: videoCallSender.socketId,
+				});
+				const callerDetail = {
+					name: `${caller.lastName} ${caller.firstName}`,
+					avatar: caller.avatar,
+					socketID: videoCallSender.socketId,
+				};
+				// Trả thông tin người gọi về phía người nhận
+				socketIO
+					.to(videoCallReceiver.socketId)
+					.emit(SOCKET_CONSTANT.SEND_CALLER_DETAIL, callerDetail);
+				return;
+			},
+		);
+
+		socket.on(SOCKET_CONSTANT.ANSWER_CALL, (data) => {
+			const { callerSocketID, signalData } = data;
+			socketIO.to(callerSocketID).emit(SOCKET_CONSTANT.CALL_ACCEPTED, signalData);
+		});
 
 		// socket.on('disconnect', () => {
 		// 	socket.broadcast.emit('call-ended');
 		// });
-		// socket.on('call-user', (data: any) => {
-		// 	const { userToCall, signalData, from, name } = data;
-		// 	socketIO.to(userToCall).emit('call-user', { signal: signalData, from, name });
-		// });
+		socket.once(SOCKET_CONSTANT.CALL_USER, (data) => {
+			const { receiverSocketID, signalData, callerDetail } = data;
+			console.log('RECEIVED_CALL');
+			socketIO
+				.to(receiverSocketID)
+				.emit(SOCKET_CONSTANT.RECEIVED_CALL, { signalData, callerDetail });
+		});
 	});
 };
 

@@ -70,6 +70,7 @@ export const createConnectedUser = (connectedUser: ConnectedUser) => {
 		);
 		if (existedUserIndex >= 0) {
 			connectedUserList[existedUserIndex].socketId = connectedUser.socketId;
+			console.log(connectedUserList);
 			return;
 		}
 
