@@ -10,7 +10,7 @@ export const findUserByIDRepository = async ({ userID }: { userID: number }) => 
 		const user = await prisma.user.findFirst({
 			where: {
 				id: userID,
-				deletedDate: null,
+				deleted: false,
 			},
 		});
 		if (user) return user;
@@ -26,7 +26,7 @@ export const findUserByUsernameRepository = async ({ username }: { username: str
 		const user = await prisma.user.findFirst({
 			where: {
 				username: username,
-				deletedDate: null,
+				deleted: false,
 			},
 		});
 		return user;
@@ -71,7 +71,7 @@ export const createUserRepository = async (user: UserEntity) => {
 				userRoleId: USER_ROLE.USER,
 				createdDate: new Date(),
 				tick: false,
-				deletedDate: null,
+				deleted: false,
 			},
 		});
 		if (newUser) return newUser;
@@ -86,7 +86,8 @@ export const findAllUsersByKeywordRepository = async ({ keyword }: { keyword: st
 	try {
 		const userList = await prisma.user.findMany({
 			where: {
-				deletedDate: null,
+				deleted: false,
+
 				OR: [
 					{
 						firstName: {

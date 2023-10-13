@@ -8,13 +8,13 @@ datasource db {
 }
 
 model Friend {
-    id               Int       @id @unique(map: "id_UNIQUE") @default(autoincrement())
-    firstUserId      Int       @map("first_user_id")
-    secondUserId     Int       @map("second_user_id")
-    createdDate      DateTime  @default(now()) @map("created_date") @db.DateTime(0)
-    deletedDate      DateTime? @map("deleted_date") @db.DateTime(0)
-    firstUserDetail  User      @relation("friends_first_user_idTousers", fields: [firstUserId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "first_friends_users")
-    secondUserDetail User      @relation("friends_second_user_idTousers", fields: [secondUserId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "second_friends_users")
+    id               Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    firstUserId      Int      @map("first_user_id")
+    secondUserId     Int      @map("second_user_id")
+    createdDate      DateTime @default(now()) @map("created_date") @db.DateTime(0)
+    deleted          Boolean  @default(false) @map("deleted")
+    firstUserDetail  User     @relation("friends_first_user_idTousers", fields: [firstUserId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "first_friends_users")
+    secondUserDetail User     @relation("friends_second_user_idTousers", fields: [secondUserId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "second_friends_users")
 
     @@index([firstUserId], map: "first_friends_users_idx")
     @@index([secondUserId], map: "second_friends_users_idx")
@@ -22,9 +22,11 @@ model Friend {
 }
 
 model MessageType {
-    id          Int       @id @unique(map: "idmessage_types_UNIQUE") @default(autoincrement())
-    name        String    @db.VarChar(45)
-    createdDate DateTime  @default(now()) @map("created_date") @db.DateTime(0)
+    id          Int      @id @unique(map: "idmessage_types_UNIQUE") @default(autoincrement())
+    name        String   @db.VarChar(45)
+    createdDate DateTime @default(now()) @map("created_date") @db.DateTime(0)
+    deleted     Boolean  @default(false) @map("deleted")
+
     messageList Message[]
 
     @@map("message_types")
@@ -52,6 +54,7 @@ model NotificationType {
     id               Int            @id @unique(map: "id_UNIQUE") @default(autoincrement())
     name             String         @map("created_date") @db.VarChar(45)
     createdDate      DateTime       @default(now()) @db.DateTime(0)
+    deleted          Boolean        @default(false)
     notificationList Notification[]
 
     @@map("notification_types")
@@ -77,10 +80,10 @@ model Notification {
 }
 
 model UserRole {
-    id          Int       @id @unique(map: "id_UNIQUE") @default(autoincrement())
-    name        String    @db.VarChar(100)
-    createdDate DateTime  @default(now()) @map("created_date") @db.DateTime(0)
-    deletedDate DateTime? @map("deleted_date") @db.DateTime(0)
+    id          Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    name        String   @db.VarChar(100)
+    createdDate DateTime @default(now()) @map("created_date") @db.DateTime(0)
+    deleted     Boolean  @default(false) @map("deleted")
     userList    User[]
 
     @@map("user_roles")
@@ -97,7 +100,7 @@ model User {
     tick                     Boolean        @default(false)
     email                    String         @db.VarChar(500)
     createdDate              DateTime       @default(now()) @map("created_date") @db.DateTime(0)
-    deletedDate              DateTime?      @map("deleted_date") @db.DateTime(0)
+    deleted                  Boolean        @default(false) @map("deleted")
     firstFriendList          Friend[]       @relation("friends_first_user_idTousers")
     secondFriendList         Friend[]       @relation("friends_second_user_idTousers")
     messageReceiverList      Message[]      @relation("messages_receiver_idTousers")

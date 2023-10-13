@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { NOTIFICATION_MESSAGE, NOTIFICATION_TYPE } from '../constants/constants';
+import { NOTIFICATION_MESSAGE, NOTIFICATION_TYPE } from '../constants/notification.constant';
 import { PAGE_SIZE } from '~/constants/constant';
 import { MESSAGES } from '~/constants/message.constant';
 

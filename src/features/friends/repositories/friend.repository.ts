@@ -23,7 +23,7 @@ export const findAllFriendsByUserIdRepository = async ({
 						secondUserId: userId,
 					},
 				],
-				deletedDate: null,
+				deleted: false,
 			},
 			skip: offset,
 			take: PAGE_SIZE,
@@ -58,7 +58,7 @@ export const checkIfUsersAreFriendRepository = async ({
 						secondUserId: currentUserID,
 					},
 				],
-				deletedDate: null,
+				deleted: false,
 			},
 		});
 
@@ -81,7 +81,7 @@ export const createFriendRepository = async ({
 		const result = await prisma.friend.create({
 			data: {
 				createdDate: new Date(),
-				deletedDate: null,
+				deleted: false,
 				firstUserId: currentUserId,
 				secondUserId: userId,
 			},
