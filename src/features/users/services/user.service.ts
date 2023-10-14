@@ -1,5 +1,18 @@
 import UserEntity from '../models/user.entity';
-import { FindAllUsersByKeyword } from './user-service.type';
+import { FindAllUsersByKeyword, FindUserByIDSocket } from './user-service.type';
+
+export const findUserByIDSocketService = async (param: FindUserByIDSocket) => {
+	try {
+		const { userID, findUserByIDRepository } = param;
+		const user = await findUserByIDRepository({ userID });
+
+		if (user) return user;
+
+		throw new Error('User not found');
+	} catch (error) {
+		throw new Error((error as Error).message);
+	}
+};
 
 export const findAllUsersByKeywordService = async (param: FindAllUsersByKeyword) => {
 	try {

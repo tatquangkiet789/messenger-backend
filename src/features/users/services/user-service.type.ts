@@ -8,6 +8,11 @@ export type FindUserByID = {
 	mapCurrentUserResponse: ({ user }: { user: UserEntity }) => CurrentUserResponse;
 };
 
+export type FindUserByIDSocket = {
+	userID: number;
+	findUserByIDRepository: ({ userID }: { userID: number }) => Promise<any>;
+};
+
 export type FindAllUsersByKeyword = {
 	keyword: string;
 	currentUserID: number;

@@ -1,15 +1,12 @@
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
 import appRoutes from './routes/routes';
-import { infoLogger } from './utils/logger.util';
-import cors from 'cors';
-import createSocketServer from './features/socket/socket';
-import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT;
 const origin = process.env.ALLOWED_ORIGIN;
 
 // MIDDLEWARE
@@ -27,9 +24,4 @@ app.use(
 // ROUTES
 appRoutes(app);
 
-// SOCKET SERVER
-const { socketServer } = createSocketServer(app);
-
-socketServer.listen(port, () => {
-	infoLogger(`Server is running at localhost:${port}`);
-});
+export default app;

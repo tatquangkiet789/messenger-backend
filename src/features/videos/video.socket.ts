@@ -1,10 +1,10 @@
 import { Socket } from 'socket.io';
 import { VIDEO_SOCKET_EVENT } from './constants/video.constant';
 import { socketIO } from '../socket/socket';
-import { findConnectedUserByUserId } from '../socket/utils/socket.util';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { findConnectedUserByUserIdService } from '../users/services/connected-user.service';
+import { USER_SOCKET_EVENT } from '../users/constants/user.constant';
+import { findUserByIDSocketService } from '../users/services/user.service';
+import { findUserByIDRepository } from '../users/repositories/user.repository';
 
 export const initVideoSocket = (socket: Socket) => {
 	// VIDEO CALL
@@ -12,23 +12,24 @@ export const initVideoSocket = (socket: Socket) => {
 		VIDEO_SOCKET_EVENT.SEND_VIDEO_CALL_RECEIVER_ID,
 		async ({ senderID, receiverID }: { senderID: number; receiverID: number }) => {
 			try {
-				console.log('SEND_VIDEO_CALL_RECEIVER_ID');
-				const videoCallReceiver = findConnectedUserByUserId({ userId: receiverID });
-				const videoCallSender = findConnectedUserByUserId({ userId: senderID });
+				const videoCallReceiver = findConnectedUserByUserIdService({ userId: receiverID });
+				const videoCallSender = findConnectedUserByUserIdService({ userId: senderID })!;
 
-				if (!videoCallReceiver || !videoCallSender) throw new Error('User not online');
-
-				const caller = await prisma.user.findFirst({
-					where: {
-						id: senderID,
-					},
-				});
-				if (!caller) return;
+				if (!videoCallReceiver) {
+					return socket.emit(USER_SOCKET_EVENT.USER_NOT_ONLINE, {
+						message: 'Người dùng hiện không online',
+					});
+				}
 
 				// Trả socketID về phía người gọi
 				socket.emit(VIDEO_SOCKET_EVENT.RECEIVE_VIDEO_CALL_RECEIVER_ID, {
 					receivedCallSocketID: videoCallReceiver.socketId,
 					callerSocketID: videoCallSender.socketId,
+				});
+
+				const caller = await findUserByIDSocketService({
+					userID: senderID,
+					findUserByIDRepository,
 				});
 
 				// Trả thông tin người gọi về phía người nhận
@@ -40,7 +41,6 @@ export const initVideoSocket = (socket: Socket) => {
 				socketIO
 					.to(videoCallReceiver.socketId)
 					.emit(VIDEO_SOCKET_EVENT.SEND_CALLER_DETAIL, callerDetail);
-				return;
 			} catch (error) {
 				throw new Error((error as Error).stack);
 			}

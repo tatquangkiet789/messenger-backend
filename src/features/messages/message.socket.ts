@@ -1,13 +1,13 @@
 import { MESSAGES } from '~/constants/message.constant';
 import { infoLogger } from '~/utils/logger.util';
 import { socketIO } from '../socket/socket';
-import { findConnectedUserByUserId } from '../socket/utils/socket.util';
 import { MessageResponse } from './models/message.response';
 import { MESSAGE_SOCKET_EVENT } from './constants/message.constant';
+import { findConnectedUserByUserIdService } from '../users/services/connected-user.service';
 
 export const sendLastestMessageSocket = (lastestMessage: MessageResponse) => {
 	try {
-		const receiverSocket = findConnectedUserByUserId({
+		const receiverSocket = findConnectedUserByUserIdService({
 			userId: lastestMessage.receiverDetail.id,
 		});
 		if (!receiverSocket) return;

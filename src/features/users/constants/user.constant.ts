@@ -1,0 +1,4 @@
+export const USER_SOCKET_EVENT = {
+	NEW_USER: 'NEW_USER',
+	USER_NOT_ONLINE: 'USER_NOT_ONLINE',
+};

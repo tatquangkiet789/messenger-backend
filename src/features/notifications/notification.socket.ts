@@ -1,16 +1,16 @@
 import { MESSAGES } from '~/constants/message.constant';
 import NotificationEntity from './models/notification.entity';
-import { findConnectedUserByUserId } from '../socket/utils/socket.util';
 import { socketIO } from '../socket/socket';
 import { infoLogger } from '~/utils/logger.util';
 import { FriendResponse } from '../friends/models/friend.reponse';
 import { mapNotificationResponse } from './utils/notification.util';
 import { NOTIFICATION_SOCKET_EVENT } from './constants/notification.constant';
+import { findConnectedUserByUserIdService } from '../users/services/connected-user.service';
 
 export const sendAddFriendNotificationSocket = (notification: NotificationEntity) => {
 	try {
 		const { notificationReceiverDetail } = notification;
-		const receiverSocket = findConnectedUserByUserId({
+		const receiverSocket = findConnectedUserByUserIdService({
 			userId: notificationReceiverDetail.id,
 		});
 		if (!receiverSocket) return;
@@ -29,7 +29,7 @@ export const sendAddFriendNotificationSocket = (notification: NotificationEntity
 export const sendAcceptedAddFriendNotificationSocket = (friend: FriendResponse) => {
 	try {
 		const { id } = friend;
-		const receiverSocket = findConnectedUserByUserId({ userId: id });
+		const receiverSocket = findConnectedUserByUserIdService({ userId: id });
 		if (!receiverSocket) return;
 
 		infoLogger(
