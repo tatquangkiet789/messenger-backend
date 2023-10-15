@@ -137,3 +137,33 @@ export const declineAddFriendNotificationRepository = async ({
 		throw new Error((error as Error).message);
 	}
 };
+
+export const findNotificationByUserIDRepository = async ({
+	senderID,
+	receiverID,
+}: {
+	senderID: number;
+	receiverID: number;
+}) => {
+	try {
+		const existedNotification = await prisma.notification.findFirst({
+			where: {
+				OR: [
+					{
+						senderId: senderID,
+						receiverId: receiverID,
+					},
+					{
+						senderId: receiverID,
+						receiverId: senderID,
+					},
+				],
+				deleted: false,
+				accepted: false,
+			},
+		});
+		return existedNotification;
+	} catch (error) {
+		throw new Error((error as Error).message);
+	}
+};

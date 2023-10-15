@@ -5,6 +5,7 @@ export type UserResponse = {
 	avatar: string;
 	tick: boolean;
 	isFriendWithCurrentUser: boolean;
+	isSentAddFriendNotification: boolean;
 };
 
 export type CurrentUserResponse = {

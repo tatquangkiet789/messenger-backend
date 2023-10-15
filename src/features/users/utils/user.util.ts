@@ -30,9 +30,11 @@ export const mapCurrentUserResponse = ({ user }: { user: UserEntity }) => {
 export const mapUserResponse = ({
 	user,
 	isFriendWithCurrentUser,
+	isSentAddFriendNotification,
 }: {
 	user: UserEntity;
 	isFriendWithCurrentUser: boolean;
+	isSentAddFriendNotification: boolean;
 }) => {
 	const userResponse: UserResponse = {
 		id: user.id!,
@@ -41,6 +43,7 @@ export const mapUserResponse = ({
 		avatar: user.avatar!,
 		tick: user.tick!,
 		isFriendWithCurrentUser: isFriendWithCurrentUser,
+		isSentAddFriendNotification: isSentAddFriendNotification,
 	};
 	return userResponse;
 };
@@ -58,6 +61,7 @@ export const filterNotFriendWithCurrentUser = ({
 				mapUserResponse({
 					user,
 					isFriendWithCurrentUser: isFriendWithCurrentUserList[index],
+					isSentAddFriendNotification: false,
 				}),
 			);
 		}

@@ -3,9 +3,12 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
 import appRoutes from './routes/routes';
+import { infoLogger } from './utils/logger.util';
+import createSocketServer from './features/socket/socket';
 
 dotenv.config();
 
+const port = process.env.PORT;
 const app: Express = express();
 const origin = process.env.ALLOWED_ORIGIN;
 
@@ -20,6 +23,12 @@ app.use(
 		methods: ['GET', 'POST'],
 	}),
 );
+
+const { socketServer } = createSocketServer(app);
+
+socketServer.listen(port, () => {
+	infoLogger(`Server is running at localhost:${port}`);
+});
 
 // ROUTES
 appRoutes(app);

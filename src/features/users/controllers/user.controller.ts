@@ -3,6 +3,7 @@ import { checkIfUsersAreFriendRepository } from '~/features/friends/repositories
 import { findAllUsersByKeywordRepository } from '../repositories/user.repository';
 import { findAllUsersByKeywordService } from '../services/user.service';
 import { filterCurrentUser, filterNotFriendWithCurrentUser } from '../utils/user.util';
+import { findNotificationByUserIDRepository } from '~/features/notifications/repositories/notification.repository';
 
 // [POST] /api/v1/users/search?q=:q
 export const findAllUsersByKeywordController = async (req: Request, res: Response) => {
@@ -17,6 +18,7 @@ export const findAllUsersByKeywordController = async (req: Request, res: Respons
 			filterCurrentUser,
 			findAllUsersByKeywordRepository,
 			filterNotFriendWithCurrentUser,
+			findNotificationByUserIDRepository,
 		});
 
 		return res.status(200).send({ content: result });

@@ -38,4 +38,11 @@ export type FindAllUsersByKeyword = {
 		userList: UserEntity[];
 		isFriendWithCurrentUserList: boolean[];
 	}) => UserResponse[];
+	findNotificationByUserIDRepository: ({
+		senderID,
+		receiverID,
+	}: {
+		senderID: number;
+		receiverID: number;
+	}) => Promise<any>;
 };
