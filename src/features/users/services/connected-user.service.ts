@@ -1,3 +1,4 @@
+import { infoLogger } from '~/utils/logger.util';
 import { ConnectedUser } from '../models/connected-user.entity';
 
 let connectedUserList: ConnectedUser[] = [];
@@ -12,13 +13,23 @@ export const createConnectedUserService = (connectedUser: ConnectedUser) => {
 		const existedUser = connectedUserList.find((user) => user.userId === connectedUser.userId);
 
 		if (existedUser) {
-			connectedUserList[existedUser.userId].socketId = connectedUser.socketId;
+			connectedUserList = [...connectedUserList].map((user) => {
+				if (user.userId === existedUser.userId) {
+					return { ...user, socketId: connectedUser.socketId };
+				}
+				return user;
+			});
+			infoLogger(
+				`Update userID: [${existedUser.userId}] with new socketID: [${connectedUser.socketId}]`,
+			);
+			console.log(connectedUserList);
 		} else {
 			connectedUserList = [...connectedUserList, connectedUser];
+			infoLogger(`Add new connected user with userID: [${connectedUser.userId}]`);
+			console.log(connectedUserList);
 		}
-
-		console.log(connectedUserList);
 	} catch (error) {
+		console.error((error as Error).stack);
 		throw new Error((error as Error).message);
 	}
 };

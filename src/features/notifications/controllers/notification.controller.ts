@@ -3,6 +3,7 @@ import {
 	acceptAddFriendNotificationService,
 	createAddFriendNotificationService,
 	declineAddFriendNotificationService,
+	deleteAddFriendNotificationService,
 	findAllAddFriendNotificationsService,
 } from '../services/notification.service';
 import {
@@ -11,6 +12,8 @@ import {
 	findAddFriendNotificationByIdRepository,
 	findAllAddFriendNotificationsRepository,
 	declineAddFriendNotificationRepository,
+	updateAddFriendNotificationDeleteRepository,
+	findNotificationByUserIDRepository,
 } from '../repositories/notification.repository';
 import { mapNotificationResponse } from '../utils/notification.util';
 import {
@@ -50,6 +53,8 @@ export const createAddFriendNotificationController = async (req: Request, res: R
 			createAddFriendNotificationRepository,
 			mapNotificationResponse,
 			sendAddFriendNotificationSocket,
+			findNotificationByUserIDRepository,
+			updateAddFriendNotificationDeleteRepository,
 		});
 
 		return res.status(200).send({ content: result });
@@ -98,6 +103,24 @@ export const declineAddFriendNotificationController = async (req: Request, res: 
 		});
 
 		return res.status(200).send({ content: result });
+	} catch (error) {
+		return res.status(400).send({ message: (error as Error).message });
+	}
+};
+
+export const deleteAddFriendNotificationController = async (req: Request, res: Response) => {
+	try {
+		const { userID } = req.body;
+		const { id: currentUserID } = req.currentUser;
+
+		const deletedAddFriendNotificationID = await deleteAddFriendNotificationService({
+			userID: userID as number,
+			currentUserID: currentUserID as number,
+			findNotificationByUserIDRepository,
+			updateAddFriendNotificationDeleteRepository,
+		});
+
+		return res.status(200).send({ deletedAddFriendNotificationID });
 	} catch (error) {
 		return res.status(400).send({ message: (error as Error).message });
 	}

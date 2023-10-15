@@ -158,11 +158,33 @@ export const findNotificationByUserIDRepository = async ({
 						receiverId: senderID,
 					},
 				],
-				deleted: false,
-				accepted: false,
 			},
 		});
 		return existedNotification;
+	} catch (error) {
+		throw new Error((error as Error).message);
+	}
+};
+
+export const updateAddFriendNotificationDeleteRepository = async ({
+	notificationId,
+	isDeleted,
+}: {
+	notificationId: number;
+	isDeleted: boolean;
+}) => {
+	try {
+		const updatedNotification = await prisma.notification.updateMany({
+			where: {
+				id: notificationId,
+			},
+			data: {
+				deleted: isDeleted,
+			},
+		});
+		if (updatedNotification) return updatedNotification;
+
+		throw new Error(MESSAGES.unknowError);
 	} catch (error) {
 		throw new Error((error as Error).message);
 	}

@@ -24,13 +24,11 @@ app.use(
 	}),
 );
 
-const { socketServer } = createSocketServer(app);
+// ROUTES
+appRoutes(app);
+
+const { socketServer } = createSocketServer(app, origin);
 
 socketServer.listen(port, () => {
 	infoLogger(`Server is running at localhost:${port}`);
 });
-
-// ROUTES
-appRoutes(app);
-
-export default app;

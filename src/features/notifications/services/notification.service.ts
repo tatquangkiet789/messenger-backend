@@ -2,10 +2,11 @@ import { MESSAGES } from '~/constants/message.constant';
 import NotificationEntity from '../models/notification.entity';
 import { AddFriendNotificationResponse } from '../models/notification.response';
 import {
-	FindAllAddFriendNotification,
-	CreateAddFriendNotification,
 	AcceptAddFriendNotification,
+	CreateAddFriendNotification,
 	DeclineAddFriendNotification,
+	DeleteAddFriendNotification,
+	FindAllAddFriendNotification,
 } from './notification-service.type';
 
 export const findAllAddFriendNotificationsService = async (param: FindAllAddFriendNotification) => {
@@ -38,11 +39,33 @@ export const createAddFriendNotificationService = async (param: CreateAddFriendN
 			createAddFriendNotificationRepository,
 			mapNotificationResponse,
 			sendAddFriendNotificationSocket,
+			findNotificationByUserIDRepository,
+			updateAddFriendNotificationDeleteRepository,
 		} = param;
-		const result: NotificationEntity = await createAddFriendNotificationRepository({
-			senderId,
-			receiverId,
+		const existed: NotificationEntity = await findNotificationByUserIDRepository({
+			senderID: senderId,
+			receiverID: receiverId,
 		});
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		let result: NotificationEntity = null as any;
+
+		if (!existed) {
+			result = await createAddFriendNotificationRepository({
+				senderId,
+				receiverId,
+			});
+		}
+		// Đã tồn tại nhưng deleted = true
+		if (existed.deleted) {
+			await updateAddFriendNotificationDeleteRepository({
+				notificationId: existed.id!,
+				isDeleted: false,
+			});
+			result = await findNotificationByUserIDRepository({
+				senderID: senderId,
+				receiverID: receiverId,
+			});
+		}
 		sendAddFriendNotificationSocket(result);
 
 		const response = mapNotificationResponse(result);
@@ -130,6 +153,39 @@ export const declineAddFriendNotificationService = async (param: DeclineAddFrien
 		});
 
 		return result;
+	} catch (error) {
+		throw new Error((error as Error).message);
+	}
+};
+
+export const deleteAddFriendNotificationService = async (param: DeleteAddFriendNotification) => {
+	try {
+		const {
+			userID,
+			currentUserID,
+			findNotificationByUserIDRepository,
+			updateAddFriendNotificationDeleteRepository,
+		} = param;
+		const existed: NotificationEntity = await findNotificationByUserIDRepository({
+			senderID: currentUserID,
+			receiverID: userID,
+		});
+
+		if (!existed) {
+			throw new Error(MESSAGES.addFriendNotificationNotFound);
+		}
+		if (existed.deleted) {
+			throw new Error(MESSAGES.cannotDeclineADeclinedAddFriendNotification);
+		}
+
+		const deletedAddFriendNotificationID = existed.id!;
+
+		const result: number = await updateAddFriendNotificationDeleteRepository({
+			notificationId: existed.id!,
+			isDeleted: true,
+		});
+
+		if (result) return deletedAddFriendNotificationID;
 	} catch (error) {
 		throw new Error((error as Error).message);
 	}

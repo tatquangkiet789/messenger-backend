@@ -5,15 +5,12 @@ import {
 	createAddFriendNotificationController,
 	acceptAddFriendNotificationController,
 	declineAddFriendNotificationController,
+	deleteAddFriendNotificationController,
 } from './controllers/notification.controller';
 
 const notificationRoutes = Router();
 
-notificationRoutes.get(
-	'/',
-	verifyAccessTokenMiddleware,
-	findAllAddFriendNotificationsController,
-);
+notificationRoutes.get('/', verifyAccessTokenMiddleware, findAllAddFriendNotificationsController);
 notificationRoutes.post(
 	'/add-friend',
 	verifyAccessTokenMiddleware,
@@ -28,6 +25,11 @@ notificationRoutes.post(
 	'/decline',
 	verifyAccessTokenMiddleware,
 	declineAddFriendNotificationController,
+);
+notificationRoutes.post(
+	'/delete',
+	verifyAccessTokenMiddleware,
+	deleteAddFriendNotificationController,
 );
 
 export default notificationRoutes;

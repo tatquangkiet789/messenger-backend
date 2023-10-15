@@ -28,6 +28,20 @@ export type CreateAddFriendNotification = {
 		senderId: number;
 		receiverId: number;
 	}) => Promise<any>;
+	findNotificationByUserIDRepository: ({
+		senderID,
+		receiverID,
+	}: {
+		senderID: number;
+		receiverID: number;
+	}) => Promise<any>;
+	updateAddFriendNotificationDeleteRepository: ({
+		notificationId,
+		isDeleted,
+	}: {
+		notificationId: number;
+		isDeleted: boolean;
+	}) => Promise<any>;
 	sendAddFriendNotificationSocket: (notification: NotificationEntity) => void;
 	mapNotificationResponse: (notification: NotificationEntity) => AddFriendNotificationResponse;
 };
@@ -91,5 +105,24 @@ export type DeclineAddFriendNotification = {
 		notificationId,
 	}: {
 		notificationId: number;
+	}) => Promise<any>;
+};
+
+export type DeleteAddFriendNotification = {
+	userID: number;
+	currentUserID: number;
+	updateAddFriendNotificationDeleteRepository: ({
+		notificationId,
+		isDeleted,
+	}: {
+		notificationId: number;
+		isDeleted: boolean;
+	}) => Promise<any>;
+	findNotificationByUserIDRepository: ({
+		senderID,
+		receiverID,
+	}: {
+		senderID: number;
+		receiverID: number;
 	}) => Promise<any>;
 };

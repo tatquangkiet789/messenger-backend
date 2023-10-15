@@ -7,12 +7,12 @@ import { USER_SOCKET_EVENT } from '../users/constants/user.constant';
 
 let socketIO: Server;
 
-export const createSocketServer = (app: Express) => {
+export const createSocketServer = (app: Express, origin: string | undefined) => {
 	const socketServer = createServer(app);
 	socketIO = new Server(socketServer, {
 		cors: {
 			credentials: true,
-			origin: ['http://localhost:3000', 'http://192.168.1.224:3000'],
+			origin: origin,
 			methods: ['GET', 'POST'],
 		},
 	});
