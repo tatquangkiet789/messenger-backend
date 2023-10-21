@@ -1,14 +1,18 @@
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { MESSAGES } from '../constants/message.constant';
-import UserEntity from '~/features/users/models/user.entity';
+import UserEntity, { DecodedUserEntity } from '~/features/users/models/user.entity';
 
 // Generate Access Token
 export const generateAccessTokenUtil = (user: UserEntity) => {
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { password, email, ...rest } = user;
-		const accessToken = jwt.sign(rest, process.env.ACCESS_TOKEN!, {
+		const decodedUser: DecodedUserEntity = {
+			id: rest.id!,
+			...rest,
+		};
+		const accessToken = jwt.sign(decodedUser, process.env.ACCESS_TOKEN!, {
 			expiresIn: '1h',
 		});
 		return accessToken;
@@ -22,7 +26,11 @@ export const generateRefreshTokenUtil = (user: UserEntity) => {
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { password, email, ...rest } = user;
-		const refreshToken = jwt.sign(rest, process.env.REFRESH_TOKEN!);
+		const decodedUser: DecodedUserEntity = {
+			id: rest.id!,
+			...rest,
+		};
+		const refreshToken = jwt.sign(decodedUser, process.env.REFRESH_TOKEN!);
 
 		return refreshToken;
 	} catch (err) {

@@ -13,6 +13,16 @@ export const UserEntityValidate = z.object({
 	userRoleId: z.number().default(USER_ROLE.USER),
 });
 
+export type DecodedUserEntity = {
+	id: number;
+	firstName: string;
+	lastName: string;
+	username: string;
+	avatar: string;
+	tick: boolean;
+	userRoleId: number;
+};
+
 type UserEntity = z.infer<typeof UserEntityValidate>;
 
 export default UserEntity;

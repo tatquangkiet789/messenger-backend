@@ -49,7 +49,6 @@ export const initVideoSocket = (socket: Socket) => {
 	socket.on(VIDEO_SOCKET_EVENT.ANSWER_CALL, (data) => {
 		try {
 			const { callerSocketID, signalData } = data;
-			console.log('socket.on(VIDEO_SOCKET_EVENT.ANSWER_CALL)');
 			socketIO.to(callerSocketID).emit(VIDEO_SOCKET_EVENT.CALL_ACCEPTED, signalData);
 		} catch (error) {
 			throw new Error((error as Error).stack);
@@ -58,12 +57,14 @@ export const initVideoSocket = (socket: Socket) => {
 	socket.on(VIDEO_SOCKET_EVENT.CALL_USER, (data) => {
 		try {
 			const { receiverSocketID, signalData, callerDetail } = data;
-			console.log('socket.on(VIDEO_SOCKET_EVENT.CALL_USER)');
 			socketIO
 				.to(receiverSocketID)
 				.emit(VIDEO_SOCKET_EVENT.RECEIVED_CALL, { signalData, callerDetail });
 		} catch (error) {
 			throw new Error((error as Error).stack);
 		}
+	});
+	socket.on(VIDEO_SOCKET_EVENT.END_CALL, (receiverSocketID: string) => {
+		socketIO.to(receiverSocketID).emit(VIDEO_SOCKET_EVENT.RECEIVED_END_CALL);
 	});
 };

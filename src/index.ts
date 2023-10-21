@@ -2,7 +2,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
-import appRoutes from './routes/routes';
+import appRoutes from './routes/app.route';
 import { infoLogger } from './utils/logger.util';
 import createSocketServer from './features/socket/socket';
 

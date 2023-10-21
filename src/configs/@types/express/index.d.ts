@@ -1,10 +1,9 @@
-import { User } from '@prisma/client';
-import { JwtPayload } from 'jsonwebtoken';
+import { DecodedUserEntity } from '~/features/users/models/user.entity';
 
 declare global {
-    namespace Express {
-        interface Request {
-            currentUser: any;
-        }
-    }
+	namespace Express {
+		interface Request {
+			currentUser: DecodedUserEntity;
+		}
+	}
 }
