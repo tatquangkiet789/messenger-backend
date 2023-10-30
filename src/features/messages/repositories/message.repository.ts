@@ -90,11 +90,13 @@ export const createMessageRepository = async ({
 	receiverId,
 	content,
 	messageTypeId,
+	parentId,
 }: {
 	senderId: number;
 	receiverId: number;
 	content: string;
 	messageTypeId: number;
+	parentId: number | undefined;
 }) => {
 	try {
 		const result = await prisma.message.create({
@@ -103,10 +105,16 @@ export const createMessageRepository = async ({
 				senderId: senderId,
 				receiverId: receiverId,
 				messageTypeId: messageTypeId,
+				parentId: parentId ? parentId : undefined,
 			},
 			include: {
 				senderDetail: true,
 				receiverDetail: true,
+				parentMessageDetail: {
+					include: {
+						senderDetail: true,
+					},
+				},
 			},
 		});
 		if (result) return result;

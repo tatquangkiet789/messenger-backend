@@ -1,4 +1,4 @@
-import UserEntity from '~/features/users/models/user.entity';
+import UserEntity, { DecodedUserEntity } from '~/features/users/models/user.entity';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type FindCurrentUserByID = {
@@ -11,8 +11,9 @@ export type Login = {
 	password: string;
 	findUserByUsernameRepository: ({ username }: { username: string }) => Promise<any>;
 	comparePassword: (password: string, hashedPassword: string) => Promise<boolean>;
-	generateAccessToken: (user: UserEntity) => string;
-	generateRefreshToken: (user: UserEntity) => string;
+	generateAccessToken: (user: DecodedUserEntity) => string;
+	generateRefreshToken: (user: DecodedUserEntity) => string;
+	mapToDecodedUserEntity: ({ user }: { user: UserEntity }) => DecodedUserEntity;
 };
 
 export type UpdatePassword = {

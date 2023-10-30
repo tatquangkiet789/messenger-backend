@@ -34,6 +34,7 @@ export const CreateMessageService = async (param: CreateMessage) => {
 			senderId,
 			receiverId,
 			content,
+			parentId,
 			uploadImage,
 			mapMessageResponse,
 			createMessageRepository,
@@ -54,6 +55,7 @@ export const CreateMessageService = async (param: CreateMessage) => {
 			receiverId,
 			content: uploadedImage ? uploadedImage : content,
 			messageTypeId,
+			parentId,
 		});
 		const result = mapMessageResponse(message);
 		sendLastestMessageSocket(result);

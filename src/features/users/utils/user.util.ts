@@ -1,4 +1,4 @@
-import UserEntity from '../models/user.entity';
+import UserEntity, { DecodedUserEntity } from '../models/user.entity';
 import { CurrentUserResponse, UserResponse } from '../models/user.response';
 
 export const filterCurrentUser = ({
@@ -11,6 +11,19 @@ export const filterCurrentUser = ({
 	const filteredList: UserEntity[] = userList.filter((user) => user.id !== currentUserID);
 	return filteredList;
 };
+
+export function mapToDecodedUserEntity({ user }: { user: UserEntity }) {
+	const decodedUser: DecodedUserEntity = {
+		id: user.id!,
+		firstName: user.firstName,
+		lastName: user.lastName,
+		username: user.username,
+		userRoleId: user.userRoleId!,
+		avatar: user.avatar!,
+		tick: user.tick!,
+	};
+	return decodedUser;
+}
 
 export const mapCurrentUserResponse = ({ user }: { user: UserEntity }) => {
 	const currentUserResposne: CurrentUserResponse = {

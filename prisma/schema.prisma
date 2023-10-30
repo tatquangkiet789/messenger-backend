@@ -33,20 +33,24 @@ model MessageType {
 }
 
 model Message {
-    id                Int         @id @unique(map: "id_UNIQUE") @default(autoincrement())
-    content           String      @db.MediumText
-    messageTypeId     Int         @map("message_type_id")
-    senderId          Int         @map("sender_id")
-    receiverId        Int         @map("receiver_id")
-    createdDate       DateTime    @default(now()) @map("created_date") @db.DateTime(0)
-    deleted           Boolean     @default(false)
-    messageTypeDetail MessageType @relation(fields: [messageTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_message_type")
-    receiverDetail    User        @relation("messages_receiver_idTousers", fields: [receiverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receiver")
-    senderDetail      User        @relation("messages_sender_idTousers", fields: [senderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sender")
+    id                  Int         @id @unique(map: "id_UNIQUE") @default(autoincrement())
+    content             String      @db.MediumText
+    messageTypeId       Int         @map("message_type_id")
+    senderId            Int         @map("sender_id")
+    receiverId          Int         @map("receiver_id")
+    parentId            Int?        @unique @map("parent_id")
+    createdDate         DateTime    @default(now()) @map("created_date") @db.DateTime(0)
+    deleted             Boolean     @default(false)
+    messageTypeDetail   MessageType @relation(fields: [messageTypeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_message_type")
+    receiverDetail      User        @relation("messages_receiver_idTousers", fields: [receiverId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_receiver")
+    senderDetail        User        @relation("messages_sender_idTousers", fields: [senderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sender")
+    parentMessageDetail Message?    @relation("commentsTocomments", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "reply_comments")
+    childMessageDetail  Message?    @relation("commentsTocomments")
 
     @@index([messageTypeId], map: "fk_message_type_idx")
     @@index([receiverId], map: "fk_receiver_idx")
     @@index([senderId], map: "fk_sender_idx")
+    @@index([parentId], map: "fk_parent_idx")
     @@map("messages")
 }
 

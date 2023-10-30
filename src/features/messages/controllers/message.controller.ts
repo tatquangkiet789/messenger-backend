@@ -37,15 +37,16 @@ export const findAllMessagesByUserIdController = async (req: Request, res: Respo
 export const createNewMessageController = async (req: Request, res: Response) => {
 	try {
 		const { id: currentUserId } = req.currentUser;
-		const { receiverId, content } = req.body;
+		const { receiverId, content, parentId } = req.body;
 		const image = req.file?.path;
 
 		const result = await CreateMessageService({
 			content: image ? image : content,
+			parentId,
 			createMessageRepository,
 			mapMessageResponse,
-			senderId: parseInt(currentUserId),
-			receiverId: parseInt(receiverId),
+			senderId: currentUserId as number,
+			receiverId: receiverId as number,
 			uploadImage,
 			sendLastestMessageSocket,
 		});

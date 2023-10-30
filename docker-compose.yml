@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+    messenger-backend:
+        build: .
+        ports:
+            - 8080:8080
+        # environment:
+        #     PORT: 8080
+        #     DATABASE_URL: mysql://root:1234567890@localhost:3306/facebook_db
+        #     CLOUD_NAME: dnwauajh9
+        #     API_KEY: 897663217318733
+        #     API_SECRET: tXbx6Ne3QD3vpsUt1ryDrZl9OIE
+        #     ALLOWED_ORIGIN: http://localhost:3000
+        #     ACCESS_TOKEN: 9aa87dc2a4065c6272e2b3e40470979ac93a0523acababe1e67d1ec8ba93575a967f5d26ff9c97c4e23ca5787d8704c87ebd6e65b05801a85c37ff64fcbd8a31
+        #     REFRESH_TOKEN: 1dd23721fcb5e8bb343c10f72d40f185670e9e7c73e8b75ad6741b36e85b551e687a2473b8bc0e71973cf4dfce991a5361515234b9db856d682fc5e8e6acf904
+        env_file:
+            - ./.env
+        extra_hosts:
+            - host.docker.internal:host-gateway
+    database:
+        image: mysql:8.0
+        volumes:
+            - facebook_db:/data/db
+        environment:
+            MYSQL_ROOT_PASSWORD: 1234567890
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
+            MYSQL_RANDOM_ROOT_PASSWORD: 1
+
+volumes:
+    facebook_db:

@@ -26,6 +26,7 @@ export const loginService = async (param: Login) => {
 			comparePassword,
 			generateAccessToken,
 			generateRefreshToken,
+			mapToDecodedUserEntity,
 		} = param;
 
 		const user: UserEntity = await findUserByUsernameRepository({ username });
@@ -34,8 +35,9 @@ export const loginService = async (param: Login) => {
 		const isMatched = await comparePassword(password, user.password!);
 		if (!isMatched) throw new Error(MESSAGES.passwordNotMatched);
 
-		const accessToken = generateAccessToken(user);
-		const refreshToken = generateRefreshToken(user);
+		const decodedUser = mapToDecodedUserEntity({ user });
+		const accessToken = generateAccessToken(decodedUser);
+		const refreshToken = generateRefreshToken(decodedUser);
 
 		return { accessToken, refreshToken };
 	} catch (error) {

@@ -1,18 +1,13 @@
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { DecodedUserEntity } from '~/features/users/models/user.entity';
 import { MESSAGES } from '../constants/message.constant';
-import UserEntity, { DecodedUserEntity } from '~/features/users/models/user.entity';
 
 // Generate Access Token
-export const generateAccessTokenUtil = (user: UserEntity) => {
+export const generateAccessTokenUtil = (user: DecodedUserEntity) => {
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { password, email, ...rest } = user;
-		const decodedUser: DecodedUserEntity = {
-			id: rest.id!,
-			...rest,
-		};
-		const accessToken = jwt.sign(decodedUser, process.env.ACCESS_TOKEN!, {
+		const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN!, {
 			expiresIn: '1h',
 		});
 		return accessToken;
@@ -22,15 +17,10 @@ export const generateAccessTokenUtil = (user: UserEntity) => {
 };
 
 // Generate Refresh Token
-export const generateRefreshTokenUtil = (user: UserEntity) => {
+export const generateRefreshTokenUtil = (user: DecodedUserEntity) => {
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		const { password, email, ...rest } = user;
-		const decodedUser: DecodedUserEntity = {
-			id: rest.id!,
-			...rest,
-		};
-		const refreshToken = jwt.sign(decodedUser, process.env.REFRESH_TOKEN!);
+		const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN!);
 
 		return refreshToken;
 	} catch (err) {

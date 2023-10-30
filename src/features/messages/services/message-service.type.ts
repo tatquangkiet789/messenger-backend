@@ -23,16 +23,19 @@ export type CreateMessage = {
 	senderId: number;
 	receiverId: number;
 	content: string;
+	parentId: number | undefined;
 	createMessageRepository: ({
 		senderId,
 		receiverId,
 		content,
 		messageTypeId,
+		parentId,
 	}: {
 		senderId: number;
 		receiverId: number;
 		content: string;
 		messageTypeId: number;
+		parentId: number | undefined;
 	}) => Promise<any>;
 	uploadImage: (content: string) => Promise<string | undefined>;
 	mapMessageResponse: (message: MessageEntity) => MessageResponse;

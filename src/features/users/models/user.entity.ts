@@ -21,6 +21,7 @@ export type DecodedUserEntity = {
 	avatar: string;
 	tick: boolean;
 	userRoleId: number;
+	iat?: number;
 };
 
 type UserEntity = z.infer<typeof UserEntityValidate>;

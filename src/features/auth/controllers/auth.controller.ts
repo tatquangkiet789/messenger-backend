@@ -20,6 +20,7 @@ import {
 	registerSerivce,
 	updatePasswordService,
 } from '../services/auth.service';
+import { mapToDecodedUserEntity } from '~/features/users/utils/user.util';
 
 // [POST] /api/v1/auth/current-user
 export const findCurrentUserByAccessTokenController = async (req: Request, res: Response) => {
@@ -49,6 +50,7 @@ export const loginController = async (req: Request, res: Response) => {
 			findUserByUsernameRepository,
 			generateAccessToken: generateAccessTokenUtil,
 			generateRefreshToken: generateRefreshTokenUtil,
+			mapToDecodedUserEntity,
 		});
 
 		saveTokenToCookieUtil(res, result.refreshToken);
@@ -115,6 +117,7 @@ export const refreshTokenController = async (req: Request, res: Response) => {
 	try {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { iat, ...user } = req.currentUser;
+		// const user = req.currentUser;
 		// Create JWT Token
 		const newAccessToken = generateAccessTokenUtil(user);
 		const newRefreshToken = generateRefreshTokenUtil(user);
